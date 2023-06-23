@@ -1,4 +1,4 @@
-import {Body, Controller, Post} from '@nestjs/common';
+import {Body, Controller, Get, Post} from '@nestjs/common';
 import {AuthService} from "../../domain/auth/auth.service";
 import {AuthLogin, AuthVerifyOtp} from "../dto/auth/auth.request";
 
@@ -20,5 +20,10 @@ export class AuthController {
     @Post("login")
     async login(@Body() body: AuthLogin) {
         return await this.authService.login(body);
+    }
+
+    @Get("me")
+    async getMe() {
+        return await this.authService.getMe()
     }
 }
