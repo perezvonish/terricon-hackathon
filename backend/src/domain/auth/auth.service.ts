@@ -51,6 +51,10 @@ export class AuthService {
         const user = await this.usersService.findOne({userName: "as"})
     }
 
+    async loginCompany() {
+
+    }
+
     private checkPasswordRepeat(password: string, repeat: string) {
         return password === repeat
     }

@@ -26,4 +26,9 @@ export class AuthController {
     async getMe() {
         return await this.authService.getMe()
     }
+
+    @Post("company/login")
+    async loginCompany() {
+        return await this.authService.loginCompany()
+    }
 }
