@@ -1,7 +1,6 @@
 import "dotenv/config"
-
-// import {entitiesArray} from "../config/entities.array";
 import {DataSource, DataSourceOptions} from "typeorm";
+import {EntitiesArray} from "./entities.array";
 
 export const dataSourceOptions: DataSourceOptions  = {
     migrationsTableName: 'migrations',
@@ -14,7 +13,7 @@ export const dataSourceOptions: DataSourceOptions  = {
     logging: false,
     synchronize: false,
     name: 'default',
-    // entities: entitiesArray,
+    entities: EntitiesArray,
     migrations: [__dirname + '/migrations/*{.ts,.js}'],
     // subscribers: ['src/subscriber/**/*{.ts,.js}'],
 }
