@@ -1,0 +1,28 @@
+$lemon-color: rgba(239, 255, 165, 1);
+$blue-color: rgba(165, 206, 255, 1);
+
+.lemonButton {
+  background-color: $lemon-color;
+  color: black;
+  text-align: center;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 30px;
+  padding: 24px 46px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background: radial-gradient(
+                  circle at left top,
+                  rgba(239, 239, 239, 1),
+                  rgba(198, 184, 249, 1)
+  );
+}
