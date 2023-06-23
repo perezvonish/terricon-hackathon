@@ -21,4 +21,7 @@ export class UsersEntity extends BasicEntity {
 
     @Column()
     birthDay: Date
+
+    @Column()
+    description: string
 }
