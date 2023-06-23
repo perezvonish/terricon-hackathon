@@ -21,3 +21,12 @@ $blue-color: rgba(165, 206, 255, 1);
   padding: 0.5rem 1rem;
 }
 
+.shadowBox {
+  background-color: rgba(255, 255, 255, 1);
+  margin: 2rem auto;
+  padding: 2rem;
+
+  border-radius: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
