@@ -6,7 +6,7 @@ import styles from "@/styles/footer.module.css"
 
 const Footer = () => {
     return (
-        <div className={styles.footer}>
+        <div className={`${styles.footer} drop-shadow-2xl`}>
             <LeftFooter />
             <CenterFooter />
             <RightFooter />

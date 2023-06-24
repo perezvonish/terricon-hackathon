@@ -1,15 +1,16 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
-import Footer from "@/components/footer/Footer";
 import Navigation from "@/components/navigation/Navigation";
-import Layout from "@/components/Layout";
+import Footer from "@/components/footer/Footer";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
       <>
-          <Layout>
+          <Navigation />
+          <main className="flex flex-col min-h-[100vh]">
               <Component {...pageProps} />
-          </Layout>
+          </main>
+          <Footer />
       </>
   )
 }
