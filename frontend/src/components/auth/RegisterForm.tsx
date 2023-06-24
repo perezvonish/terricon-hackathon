@@ -31,26 +31,25 @@ const RegisterForm = ({ onTabChange }: {onTabChange: any}) => {
     };
 
     const handleSwitchToRegister = () => {
-        // @ts-ignore
-        onTabChange('login');
+        return onTabChange('login');
     };
 
     return (
         <form>
             <label className="flex flex-col items-center">
-                <div className="mr-2">
+                <div className="mr-2 self-start">
                     <button onClick={handleSwitchToRegister}>
                         <Image priority src={ArrowImage} alt="Back" width={24} height={24} />
                     </button>
                 </div>
                 <span className="text-black text-[40px] font-normal">РЕГИСТРАЦИЯ</span>
 
-                <div className="flex flex-col mt-6 w-96">
+                <div className="flex flex-col mt-6">
                     <div className="flex flex-row justify-around items-center">
-                        <button id="customer" type="button" className={`bg-zinc-100 rounded-[30px] text-lg p-4 ${userType === 'customer' ? 'bg-blue-300' : 'bg-blue-200'}`} onClick={() => changeUserType('customer')}>
+                        <button id="customer" type="button" className={`rounded-[30px] text-lg p-4 ${userType === 'customer' ? 'bg-blue-300' : 'bg-gray-0'}`} onClick={() => changeUserType('customer')}>
                             Я заказчик
                         </button>
-                        <button id="executor" type="button" className={`bg-zinc-100 rounded-[30px] text-lg p-4 ${userType === 'executor' ? 'bg-blue-300' : 'bg-blue-200'}`} onClick={() => changeUserType('executor')}>
+                        <button id="executor" type="button" className={` rounded-[30px] text-lg p-4 ${userType === 'executor' ? 'bg-blue-300' : 'bg-none'}`} onClick={() => changeUserType('executor')}>
                             Я исполнитель
                         </button>
                     </div>
@@ -86,10 +85,10 @@ const RegisterForm = ({ onTabChange }: {onTabChange: any}) => {
                     <div className={styles.checkboxContainer}>
                         <input type="checkbox" id="flag" name="flag" required className={styles.checkboxInput}/>
                         <label htmlFor="flag" className={styles.checkboxCheckmark}></label>
-                        <label htmlFor="flag" className="w-96">Я прочел условия и даю согласие на обработку персональных данных</label>
+                        <label className="ml-2" htmlFor="flag">Я прочел условия и даю согласие на обработку персональных данных</label>
                     </div>
 
-                    <button type="submit" className="bg-zinc-100 rounded-[30px] text-lg font-bold p-4 mt-4 bg-blue-200">Зарегистрироваться</button>
+                    <button type="submit" className="rounded-[30px] text-lg font-bold p-4 mt-4 bg-blue-200">Зарегистрироваться</button>
                 </div>
             </label>
         </form>

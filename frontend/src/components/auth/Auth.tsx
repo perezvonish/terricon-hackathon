@@ -12,10 +12,12 @@ const Auth = () => {
     };
 
     return (
-        <div className="flex flex-col items-center">
-            <div className={general.shadowBox}>
-                {activeTab === 'login' && <LoginForm onTabChange={handleTabChange} />}
-                {activeTab === 'register' && <RegisterForm onTabChange={handleTabChange} />}
+        <div className="flex flex-col items-center m-auto">
+            <div className={`${general.shadowBox}`}>
+                <div className="p-10">
+                    {activeTab === 'login' && <LoginForm onTabChange={handleTabChange} />}
+                    {activeTab === 'register' && <RegisterForm onTabChange={handleTabChange} />}
+                </div>
             </div>
         </div>
     );
