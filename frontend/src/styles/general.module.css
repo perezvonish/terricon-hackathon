@@ -5,7 +5,7 @@
   flex-shrink: 0;
   border: none;
   border-radius: 30px;
-  padding: 24px 46px;
+  padding: 1rem 2rem;
 }
 
 .blueButton {
@@ -18,13 +18,53 @@
   padding: 0.5rem 1rem;
 }
 
+.emptyButton {
+  color: black;
+  text-align: center;
+  border: 1px solid #000;
+  border-radius: 2rem;
+  width: min-content;
+  padding: 0.5rem 1rem;
+}
+
 .shadowBox {
   background-color: rgb(255, 255, 255);
-  margin: 2rem auto;
   padding: 2rem;
+  max-height: 100vh;
   border-radius: 2rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
+}
+
+.gridBoxLemon {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 2rem;
+  background-color: rgb(239, 255, 165);
+  color: black;
+  text-align: left;
+  padding: 1rem 2rem;
+}
+
+.gridBoxBlue {
+  display: flex;
+  height: fit-content;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 2rem;
+  background-color: rgb(165, 206, 255);
+  color: black;
+  text-align: center;
+  padding: 1rem 1rem;
+}
+
+.gradientBackground {
+  background: radial-gradient(circle at left top, rgb(239, 255, 165), rgb(255, 255, 255) 50%, rgb(165, 206, 255));
+}
+
+.last *:last-child {
+  margin-right: 0;
 }
 
 /*# sourceMappingURL=general.module.css.map */

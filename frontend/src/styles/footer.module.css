@@ -1,12 +1,9 @@
 .footer {
-  display: inline-block;
+  display: flex;
   flex-direction: row;
   justify-content: space-between;
-  bottom: 0;
-  left: 0;
   padding: 1rem 6rem;
   background-color: white;
-  width: 100%;
 }
 
 /*# sourceMappingURL=footer.module.css.map */
