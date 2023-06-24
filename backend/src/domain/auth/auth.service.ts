@@ -19,6 +19,11 @@ import { AuthLoginRequestDto } from './dto/auth-login-request.dto';
 import { PayloadDto } from './dto/payload.dto';
 import { PasswordManager } from '../../infrastructure/password-manager';
 import { AuthVerifyOtpRequest } from './dto/auth-verify-otp-request';
+import { AuthTransaction } from '../../infrastructure/transactions/auth-transaction';
+import { AuthLoginResponseDto } from './dto/auth-login-response.dto';
+import { v4 } from 'uuid';
+import { SmsResetPasswordEntity } from '../sms/sms-reset-password.entity';
+import { SmsResetPasswordRepository } from '../../infrastructure/repositories/sms-reset-password.repository';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +34,8 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly smsService: SmsService,
     private readonly passwordManager: PasswordManager,
+    private readonly authTransaction: AuthTransaction,
+    private readonly smsResetPasswordRepo: SmsResetPasswordRepository,
   ) {}
 
   private async signIn(payload: PayloadDto): Promise<AuthLoginSuccess> {
@@ -37,7 +44,10 @@ export class AuthService {
     };
   }
 
-  async login({ phoneNumber, password }: AuthLoginRequestDto): Promise<any> {
+  async login({
+    phoneNumber,
+    password,
+  }: AuthLoginRequestDto): Promise<AuthLoginResponseDto> {
     const candidate = await this.userRepo.getByPhoneNumber(phoneNumber);
 
     if (!candidate) {
@@ -71,23 +81,23 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const alreadyUser = await this.userRepo.getByPhoneNumber(dto.phoneNumber);
-    if (alreadyUser) {
-      throw new HttpException('user already exist', HttpStatus.BAD_REQUEST);
+    const candidate = await this.userRepo.getByPhoneNumber(dto.phoneNumber);
+    if (candidate) {
+      throw new HttpException(
+        'phone number already exists',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     const hashPassword = await this.passwordManager.hashPassword(dto.password);
 
     const verifyCode = this.smsService.mockGenerateCode();
-    const userInsert = new UsersEntity(
-      dto.phoneNumber,
+
+    const user = await this.authTransaction.register(
+      dto,
       hashPassword,
-      dto.name,
-      dto.surname,
-      dto.role,
       verifyCode,
     );
-    const user = await this.userRepo.save(userInsert);
-    return new AuthRegisterResponseDto(user.id, user.phoneNumber);
+    return new AuthRegisterResponseDto(1, '123123');
   }
 
   async verifyOtpCode(
@@ -102,5 +112,26 @@ export class AuthService {
     }
     user.isVerify = true;
     await this.userRepo.save(user);
+  }
+
+  async getResetPasswordCode(phoneNumber: string): Promise<void> {
+    const user = await this.validateUserByPhoneNumber(phoneNumber);
+    const smsCode = this.smsService.mockGenerateCode();
+    const smsResetPassword = new SmsResetPasswordEntity(smsCode, v4(), user);
+
+    const sms = await this.smsResetPasswordRepo.save(smsResetPassword);
+  }
+
+  private async validateUserByPhoneNumber(
+    phoneNumber: string,
+  ): Promise<UsersEntity> {
+    const candidate = await this.userRepo.getByPhoneNumber(phoneNumber);
+    console.log(candidate);
+    console.log('zxc');
+
+    if (!candidate) {
+      throw new NotFoundException(CustomExceptions.USER_NOT_FOUND);
+    }
+    return candidate;
   }
 }

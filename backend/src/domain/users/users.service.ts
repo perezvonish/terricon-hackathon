@@ -26,7 +26,7 @@ export class UsersService {
     return user;
   }
 
-  private async changePassword(
+  public async changePassword(
     user: UsersEntity,
     dto: UserChangePasswordRequestDto,
   ): Promise<void> {
@@ -46,6 +46,4 @@ export class UsersService {
     user.password = await this.passwordManager.hashPassword(dto.newPassword);
     await this.userRepo.save(user);
   }
-
-  update;
 }

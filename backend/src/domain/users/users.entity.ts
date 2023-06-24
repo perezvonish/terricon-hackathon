@@ -3,16 +3,20 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserRoles } from '../interfaces/user.roles';
+import { EmployeeEntity } from '../employee/employee.entity';
+import { ClientEntity } from '../client/client.entity';
+// import { SmsResetPasswordEntity } from '../sms/sms-reset-password.entity';
 @Entity({ name: 'user' })
 export class UsersEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   phoneNumber: string;
 
   @Column()
@@ -39,11 +43,26 @@ export class UsersEntity {
   @Column()
   verifyCode: string;
 
+  @Column({ nullable: true })
+  resetPasswordCode: string;
+
   @Column({ enum: UserRoles })
   role: UserRoles;
 
   @Column({ default: 0 })
   raining: number;
+
+  @OneToOne(() => EmployeeEntity)
+  employee: EmployeeEntity;
+
+  @OneToOne(() => ClientEntity)
+  client: ClientEntity;
+
+  // @OneToMany(
+  //   () => SmsResetPasswordEntity,
+  //   (smsResetPassword) => smsResetPassword.user,
+  // )
+  // smsResetPassword: SmsResetPasswordEntity[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
