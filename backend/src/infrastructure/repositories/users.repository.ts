@@ -1,26 +1,30 @@
-import {Injectable} from "@nestjs/common";
-import {InjectRepository} from "@nestjs/typeorm";
-import {UsersEntity} from "../../domain/users/users.entity";
-import {DeepPartial, FindManyOptions, FindOneOptions, FindOptionsWhere, Repository} from "typeorm";
-import {IRepository} from "../../domain/interfaces/repository.interface";
+import { InjectRepository } from '@nestjs/typeorm';
+import { UsersEntity } from '../../domain/users/users.entity';
+import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class UsersRepository implements IRepository<UsersEntity> {
-    constructor(
-        @InjectRepository(UsersEntity)
-        private readonly repo: Repository<UsersEntity>
-    ) {}
+export class UsersRepository {
+  constructor(
+    @InjectRepository(UsersEntity)
+    private readonly repo: Repository<UsersEntity>,
+  ) {}
 
-    findMany(where: FindManyOptions<UsersEntity>) {
-    }
+  async save(user: UsersEntity): Promise<UsersEntity> {
+    return await this.repo.save(user);
+  }
 
-    findOne(where: FindOneOptions<UsersEntity>) {
-        return this.repo.findOne(where)
-    }
+  async getByPhoneNumber(phoneNumber: string): Promise<UsersEntity> {
+    return await this.repo
+      .createQueryBuilder('user')
+      .where('user.phone_number = :phoneNumber', { phoneNumber })
+      .getOne();
+  }
 
-    save(data: DeepPartial<UsersEntity>) {
-    }
-
-    softDelete(where: FindManyOptions<UsersEntity>) {
-    }
+  async getById(id: number): Promise<UsersEntity> {
+    return await this.repo
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id })
+      .getOne();
+  }
 }
