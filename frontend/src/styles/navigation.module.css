@@ -1,0 +1,15 @@
+.navigation {
+  background-color: rgb(255, 255, 255);
+  text-align: center;
+}
+
+.navigationRight {
+  display: flex;
+  flex-direction: row;
+}
+
+.navigationLink {
+  margin-left: 1rem;
+}
+
+/*# sourceMappingURL=navigation.module.css.map */
