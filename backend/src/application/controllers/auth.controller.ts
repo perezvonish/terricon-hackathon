@@ -21,6 +21,7 @@ import { AuthLoginRequestDto } from '../../domain/auth/dto/auth-login-request.dt
 import { AuthLoginResponseDto } from '../../domain/auth/dto/auth-login-response.dto';
 import JwtAuthenticationGuard from '../guards/jwt-auth.guard';
 import { AuthVerifyOtpRequest } from '../../domain/auth/dto/auth-verify-otp-request';
+import { AuthVerifyOtp, RequestRecovery } from '../dto/auth/auth.request';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -49,22 +50,20 @@ export class AuthController {
   @ApiOperation({ summary: 'verify user' })
   @ApiOkResponse()
   @Patch('verify-otp')
-  async verifyOtpCode(@Body() dto: AuthVerifyOtpRequest) {
+  verifyOtpCode(@Body() dto: AuthVerifyOtpRequest) {
     return this.authService.verifyOtpCode(dto);
   }
 
+  @UseGuards(JwtAuthenticationGuard)
   @Post('request-recovery')
   @ApiOkResponse()
-  async requestRecovery() {}
+  async requestRecovery(@Body() body: RequestRecovery): Promise<boolean> {
+    return await this.authService.requestRecovery(body);
+  }
 
   @Post('reset-password')
   @ApiOkResponse()
-  async resetPassword(@Body() dto) {
-    // return this.authService.resetPassword(phoneNumber);
-  }
-
-  @Get('reset-password-code')
-  async getResetPasswordCode(@Body() dto) {
-    return await this.authService.getResetPasswordCode(dto.phoneNumber);
+  async resetPassword(@Body() body: AuthVerifyOtp): Promise<boolean> {
+    return this.authService.resetPassword(body);
   }
 }

@@ -15,9 +15,20 @@ export class AuthRegister {
   passwordRepeat: string;
 }
 
+export class RequestRecovery {
+  @ApiProperty()
+  phoneNumber: string;
+}
+
 export class AuthVerifyOtp {
   @ApiProperty()
-  code: string;
+  phoneNumber: string;
+
+  @ApiProperty()
+  resetPasswordCode: string;
+
+  @ApiProperty()
+  newPassword: string;
 }
 
 export class AuthLogin {

@@ -1,11 +1,16 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersEntity } from '../../domain/users/users.entity';
-import { Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { UserRoles } from '../../domain/interfaces/user.roles';
+import { IRepository } from '../../domain/interfaces/repository.interface';
 
 @Injectable()
-export class UsersRepository {
+export class UsersRepository implements IRepository<UsersEntity> {
   constructor(
     @InjectRepository(UsersEntity)
     private readonly repo: Repository<UsersEntity>,
@@ -29,21 +34,15 @@ export class UsersRepository {
       .getOne();
   }
 
-  async getUserWithEmployeeByUserId(id: number): Promise<UsersEntity> {
-    return await this.repo
-      .createQueryBuilder('user')
-      .where('user.id = :id', { id })
-      .andWhere('user.role = :role', { role: UserRoles.EMPLOYER })
-      .leftJoinAndSelect('user.emoloyee', 'emoloyee')
-      .getOne();
+  findMany(where: FindManyOptions<UsersEntity>) {
+    return this.repo.find(where);
   }
 
-  // async getUserByPhoneNumberWithSmsResetPassword(
-  //   phoneNumber: string,
-  // ): Promise<UsersEntity> {
-  //   return await this.repo
-  //     .createQueryBuilder('user')
-  //     .where('user.phoneNumber = :phoneNumber', { phoneNumber })
-  //     // .leftJoinAndSelect();
-  // }
+  findOne(where: FindOneOptions<UsersEntity>) {
+    return this.repo.findOne(where);
+  }
+
+  softDelete(where: FindOptionsWhere<UsersEntity>) {
+    return this.repo.softDelete(where);
+  }
 }

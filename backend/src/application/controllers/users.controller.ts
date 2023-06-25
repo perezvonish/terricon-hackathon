@@ -23,7 +23,7 @@ export class UsersController {
   @Get('by-id/:id')
   @UseGuards(JwtAuthenticationGuard)
   public async getById(@Param('id') param: ParamIdDto): Promise<UserResponse> {
-    return this.userService.getUser(param.id);
+    return this.userService.getUserById(param.id);
   }
 
   @Patch('change-password')

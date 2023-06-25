@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -25,6 +26,10 @@ import { AuthLoginResponseDto } from './dto/auth-login-response.dto';
 import { v4 } from 'uuid';
 import { SmsResetPasswordEntity } from '../sms/sms-reset-password.entity';
 import { SmsResetPasswordRepository } from '../../infrastructure/repositories/sms-reset-password.repository';
+import {
+  AuthVerifyOtp,
+  RequestRecovery,
+} from '../../application/dto/auth/auth.request';
 
 @Injectable()
 export class AuthService {
@@ -76,12 +81,10 @@ export class AuthService {
   async register(
     dto: AuthRegisterRequestDto,
   ): Promise<AuthRegisterResponseDto> {
-    if (dto.password !== dto.repeatPassword) {
-      throw new HttpException(
-        'invalid password repeat',
-        HttpStatus.BAD_REQUEST,
-      );
+    if (this.checkPasswordRepeat(dto.password, dto.repeatPassword)) {
+      throw new ForbiddenException('Invalid password repeat');
     }
+
     const candidate = await this.userRepo.getByPhoneNumber(dto.phoneNumber);
     if (candidate) {
       throw new HttpException(
@@ -113,7 +116,7 @@ export class AuthService {
 
     if (code == user.verifyCode) {
       user.isVerify = true;
-      user.verifyCode = null
+      user.verifyCode = null;
     }
 
     await this.userRepo.save(user);
@@ -122,24 +125,37 @@ export class AuthService {
     return password === repeat;
   }
 
-  async getResetPasswordCode(phoneNumber: string): Promise<void> {
-    const user = await this.validateUserByPhoneNumber(phoneNumber);
-    const smsCode = this.smsService.mockGenerateCode();
-    const smsResetPassword = new SmsResetPasswordEntity(smsCode, v4(), user);
+  async requestRecovery({ phoneNumber }: RequestRecovery): Promise<boolean> {
+    const user = await this.usersService.findOne({ where: { phoneNumber } });
 
-    const sms = await this.smsResetPasswordRepo.save(smsResetPassword);
-  }
-
-  private async validateUserByPhoneNumber(
-    phoneNumber: string,
-  ): Promise<UsersEntity> {
-    const candidate = await this.userRepo.getByPhoneNumber(phoneNumber);
-    console.log(candidate);
-    console.log('zxc');
-
-    if (!candidate) {
+    if (!user) {
       throw new NotFoundException(CustomExceptions.USER_NOT_FOUND);
     }
-    return candidate;
+
+    user.verifyCode = this.smsService.mockGenerateCode();
+    await this.userRepo.save(user);
+
+    return true;
+  }
+
+  async resetPassword({
+    phoneNumber,
+    resetPasswordCode,
+    newPassword,
+  }: AuthVerifyOtp): Promise<boolean> {
+    const user = await this.userRepo.findOne({ where: { phoneNumber } });
+
+    if (!user) {
+      throw new NotFoundException(CustomExceptions.USER_NOT_FOUND);
+    }
+    if (user.resetPasswordCode !== resetPasswordCode) {
+      throw new ForbiddenException(CustomExceptions.VERIFY_CODE_INCORRECT);
+    }
+
+    user.resetPasswordCode = null;
+    user.password = await this.passwordManager.hashPassword(newPassword);
+    await this.userRepo.save(user);
+
+    return true;
   }
 }
