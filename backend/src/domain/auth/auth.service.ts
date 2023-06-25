@@ -1,54 +1,111 @@
-import {Injectable, NotFoundException} from "@nestjs/common";
-import {JwtService} from "@nestjs/jwt";
-import {UsersService} from "../users/users.service";
-import {AuthLogin, AuthRegister, AuthVerifyOtp} from "../../application/dto/auth/auth.request";
-import {FindOptionsWhere} from "typeorm";
-import {UsersEntity} from "../users/users.entity";
-import {CustomExceptions} from "../../config/custom.exceptions";
-import bcrypt from "bcrypt";
-import "dotenv/config.js"
-import * as process from "process";
-import {AuthLoginSuccess} from "../../application/dto/auth/auth.response";
-import {UserRoles} from "../interfaces/user.roles";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
+import { UsersEntity } from '../users/users.entity';
+import { CustomExceptions } from '../../config/custom.exceptions';
+import 'dotenv/config.js';
+import { AuthLoginSuccess } from '../../application/dto/auth/auth.response';
+import { AuthRegisterRequestDto } from './dto/auth-register-request.dto';
+import { UsersRepository } from '../../infrastructure/repositories/users.repository';
+import { AuthRegisterResponseDto } from './dto/auth-register-response.dto';
+import { ConfigService } from '@nestjs/config';
+import { SmsService } from '../sms/sms.service';
+import { AuthLoginRequestDto } from './dto/auth-login-request.dto';
+import { PayloadDto } from './dto/payload.dto';
+import { PasswordManager } from '../../infrastructure/password-manager';
+import { AuthVerifyOtpRequest } from './dto/auth-verify-otp-request';
+import { AuthTransaction } from '../../infrastructure/transactions/auth-transaction';
+import { AuthLoginResponseDto } from './dto/auth-login-response.dto';
+import { v4 } from 'uuid';
+import { SmsResetPasswordEntity } from '../sms/sms-reset-password.entity';
+import { SmsResetPasswordRepository } from '../../infrastructure/repositories/sms-reset-password.repository';
 
 @Injectable()
 export class AuthService {
-    private readonly saltRounds: number = Number(process.env.BCRYPT_SALT_ROUNDS)
+  constructor(
+    private jwtService: JwtService,
+    private readonly usersService: UsersService,
+    private readonly userRepo: UsersRepository,
+    private readonly configService: ConfigService,
+    private readonly smsService: SmsService,
+    private readonly passwordManager: PasswordManager,
+    private readonly authTransaction: AuthTransaction,
+    private readonly smsResetPasswordRepo: SmsResetPasswordRepository,
+  ) {}
 
-    constructor(
-        private jwtService: JwtService,
-        private readonly usersService: UsersService,
-    ) {}
+  private async signIn(payload: PayloadDto): Promise<AuthLoginSuccess> {
+    return {
+      token: await this.jwtService.signAsync(payload),
+    };
+  }
 
-    private async signIn(userName: string, type: UserRoles): Promise<AuthLoginSuccess> {
-        return {
-            token: await this.jwtService.signAsync({ userName, type }),
-        };
+  async login({
+    phoneNumber,
+    password,
+  }: AuthLoginRequestDto): Promise<AuthLoginResponseDto> {
+    const candidate = await this.userRepo.getByPhoneNumber(phoneNumber);
+
+    if (!candidate) {
+      throw new NotFoundException(CustomExceptions.USER_NOT_FOUND);
     }
 
-    async login({userName, password}: AuthLogin): Promise<AuthLoginSuccess> {
-        const where: FindOptionsWhere<UsersEntity> = {
-            userName
-        }
-        const user = await this.usersService.findOne(where);
+    const verifyPassword = await this.passwordManager.comparePassword(
+      password,
+      candidate.password,
+    );
 
-        if (!user){
-            throw new NotFoundException(CustomExceptions.USER_NOT_FOUND)
-        }
-
-        if (await this.comparePassword(password, user.password)){
-            return await this.signIn(user.userName, user.type)
-        }
+    if (verifyPassword) {
+      const payload: PayloadDto = {
+        id: candidate.id,
+        phoneNumber: candidate.phoneNumber,
+        role: candidate.role,
+        isVerify: candidate.isVerify,
+        registerAt: candidate.createdAt,
+        updatedAt: candidate.updatedAt,
+      };
+      return await this.signIn(payload);
     }
+  }
 
-    async register(data: AuthRegister) {}
-
-    async verifyOtpCode({code}: AuthVerifyOtp) {
-        //hardcode
+  async register(
+    dto: AuthRegisterRequestDto,
+  ): Promise<AuthRegisterResponseDto> {
+    if (dto.password !== dto.repeatPassword) {
+      throw new HttpException(
+        'invalid password repeat',
+        HttpStatus.BAD_REQUEST,
+      );
     }
+    const candidate = await this.userRepo.getByPhoneNumber(dto.phoneNumber);
+    if (candidate) {
+      throw new HttpException(
+        'phone number already exists',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const hashPassword = await this.passwordManager.hashPassword(dto.password);
 
-    async getMe() {
-        const user = await this.usersService.findOne({userName: "as"})
+    const verifyCode = this.smsService.mockGenerateCode();
+
+    const user = await this.authTransaction.register(
+      dto,
+      hashPassword,
+      verifyCode,
+    );
+    return new AuthRegisterResponseDto(1, '123123');
+  }
+
+  async verifyOtpCode(
+    user: UsersEntity,
+    dto: AuthVerifyOtpRequest,
+  ): Promise<void> {
+    if (user.isVerify) {
+      throw new HttpException('user verify already', HttpStatus.BAD_REQUEST);
     }
 
     async loginCompany() {
@@ -57,13 +114,31 @@ export class AuthService {
 
     private checkPasswordRepeat(password: string, repeat: string) {
         return password === repeat
+    if (user.verifyCode != dto.code) {
+      throw new HttpException('invalid code', HttpStatus.BAD_REQUEST);
     }
+    user.isVerify = true;
+    await this.userRepo.save(user);
+  }
 
-    private async hashPassword(password: string) {
-        return await bcrypt.hashSync(password, this.saltRounds);
-    }
+  async getResetPasswordCode(phoneNumber: string): Promise<void> {
+    const user = await this.validateUserByPhoneNumber(phoneNumber);
+    const smsCode = this.smsService.mockGenerateCode();
+    const smsResetPassword = new SmsResetPasswordEntity(smsCode, v4(), user);
 
-    private async comparePassword(password: string, hash: string) {
-        return await bcrypt.compare(password, hash);
+    const sms = await this.smsResetPasswordRepo.save(smsResetPassword);
+  }
+
+  private async validateUserByPhoneNumber(
+    phoneNumber: string,
+  ): Promise<UsersEntity> {
+    const candidate = await this.userRepo.getByPhoneNumber(phoneNumber);
+    console.log(candidate);
+    console.log('zxc');
+
+    if (!candidate) {
+      throw new NotFoundException(CustomExceptions.USER_NOT_FOUND);
     }
+    return candidate;
+  }
 }

@@ -1,28 +1,31 @@
-import {ApiProperty} from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsPhoneNumber, IsString } from 'class-validator';
 
 export class AuthRegister {
-    @ApiProperty()
-    phoneNumber: string
+  @ApiProperty()
+  phoneNumber: string;
 
-    @ApiProperty()
-    userName: string
+  @ApiProperty()
+  userName: string;
 
-    @ApiProperty()
-    password: string
+  @ApiProperty()
+  password: string;
 
-    @ApiProperty()
-    passwordRepeat: string
+  @ApiProperty()
+  passwordRepeat: string;
 }
 
 export class AuthVerifyOtp {
-    @ApiProperty()
-    code: string
+  @ApiProperty()
+  code: string;
 }
 
 export class AuthLogin {
-    @ApiProperty()
-    userName: string
+  @ApiProperty()
+  @IsPhoneNumber('KZ')
+  phoneNumber: string;
 
-    @ApiProperty()
-    password: string
+  @ApiProperty()
+  @IsString()
+  password: string;
 }
