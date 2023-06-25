@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './application/controllers/app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrmConfig } from './infrastructure/dataSourceOptions';
 import { ConfigModule } from '@nestjs/config';
@@ -13,7 +12,7 @@ import { DadataModule } from './domain/dadata/dadata.module';
     ...ModulesArray,
     DadataModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}
