@@ -29,11 +29,12 @@ export class UsersRepository {
   }
 
   findMany(where: FindOptionsWhere<UsersEntity>) {
-    return this.repo
-      .createQueryBuilder('user')
-      .select('user.id')
-      .where(`user.role = ${UserRoles.EMPLOYER}`)
-      .getMany();
+    return this.repo.find({
+      where,
+      select: {
+        name: true,
+      },
+    });
   }
 
   findOne(where: FindOneOptions<UsersEntity>) {

@@ -7,6 +7,7 @@ import GeneralWork from "../../../public/GeneralWork.png"
 import CleaningRoom from "../../../public/CleaningRoom.png"
 import Elect from "../../../public/Elect.png"
 import {categoriesGetList} from "@/api/categories.api";
+import Link from "next/link";
 
 const Find = () => {
     const [searchResults, setSearchResults] = useState([]);
@@ -37,7 +38,9 @@ const Find = () => {
                         ))}
                     </datalist>
 
-                    <button className={general.blueButton}>Найти</button>
+                    <Link href="/employee/list">
+                        <button className={general.blueButton}>Найти</button>
+                    </Link>
                 </div>
 
 
