@@ -107,6 +107,13 @@ export class AuthService {
     if (user.isVerify) {
       throw new HttpException('user verify already', HttpStatus.BAD_REQUEST);
     }
+
+    async loginCompany() {
+
+    }
+
+    private checkPasswordRepeat(password: string, repeat: string) {
+        return password === repeat
     if (user.verifyCode != dto.code) {
       throw new HttpException('invalid code', HttpStatus.BAD_REQUEST);
     }

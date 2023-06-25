@@ -58,6 +58,17 @@ export class AuthController {
     return this.authService.login(body);
   }
 
+    @Get("me")
+    async getMe() {
+        return await this.authService.getMe()
+    }
+
+    @Post("company/login")
+    async loginCompany() {
+        return await this.authService.loginCompany()
+    }
+}
+
   @Get('reset-password-code')
   async getResetPasswordCode(@Body() dto) {
     return await this.authService.getResetPasswordCode(dto.phoneNumber);
