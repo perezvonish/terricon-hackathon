@@ -6,7 +6,7 @@ import {
   Length,
   MinLength,
 } from 'class-validator';
-import { UserRegisterRoles, UserRoles } from '../../interfaces/user.roles';
+import { UserRoles } from '../../interfaces/user.roles';
 import { Transform } from 'class-transformer';
 
 export class AuthRegisterRequestDto {
@@ -34,7 +34,7 @@ export class AuthRegisterRequestDto {
   @Length(11, 30)
   public repeatPassword;
 
-  @ApiProperty({ example: 'CLIENT', enum: UserRegisterRoles })
-  @IsEnum(UserRegisterRoles)
+  @ApiProperty({ example: 'CLIENT', enum: UserRoles })
+  @IsEnum(UserRoles)
   role: UserRoles;
 }

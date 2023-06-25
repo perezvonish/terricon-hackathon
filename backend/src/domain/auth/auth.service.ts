@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -38,12 +39,6 @@ export class AuthService {
     private readonly smsResetPasswordRepo: SmsResetPasswordRepository,
   ) {}
 
-  private async signIn(payload: PayloadDto): Promise<AuthLoginSuccess> {
-    return {
-      token: await this.jwtService.signAsync(payload),
-    };
-  }
-
   async login({
     phoneNumber,
     password,
@@ -72,6 +67,12 @@ export class AuthService {
     }
   }
 
+  private async signIn(payload: PayloadDto): Promise<AuthLoginSuccess> {
+    return {
+      token: await this.jwtService.signAsync(payload),
+    };
+  }
+
   async register(
     dto: AuthRegisterRequestDto,
   ): Promise<AuthRegisterResponseDto> {
@@ -92,33 +93,33 @@ export class AuthService {
 
     const verifyCode = this.smsService.mockGenerateCode();
 
-    const user = await this.authTransaction.register(
-      dto,
-      hashPassword,
-      verifyCode,
-    );
+    await this.authTransaction.register(dto, hashPassword, verifyCode);
     return new AuthRegisterResponseDto(1, '123123');
   }
 
-  async verifyOtpCode(
-    user: UsersEntity,
-    dto: AuthVerifyOtpRequest,
-  ): Promise<void> {
+  async verifyOtpCode({
+    code,
+    phoneNumber,
+  }: AuthVerifyOtpRequest): Promise<void> {
+    const user = await this.userRepo.getByPhoneNumber(phoneNumber);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     if (user.isVerify) {
-      throw new HttpException('user verify already', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('User already verified');
     }
 
-    async loginCompany() {
-
+    if (code == user.verifyCode) {
+      user.isVerify = true;
+      user.verifyCode = null
     }
 
-    private checkPasswordRepeat(password: string, repeat: string) {
-        return password === repeat
-    if (user.verifyCode != dto.code) {
-      throw new HttpException('invalid code', HttpStatus.BAD_REQUEST);
-    }
-    user.isVerify = true;
     await this.userRepo.save(user);
+  }
+  private checkPasswordRepeat(password: string, repeat: string) {
+    return password === repeat;
   }
 
   async getResetPasswordCode(phoneNumber: string): Promise<void> {

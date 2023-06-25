@@ -1,10 +1,5 @@
 export enum UserRoles {
-  ADMIN = 'ADMIN',
-  CLIENT = 'CLIENT',
-  EMPLOYER = 'EMPLOYER',
-}
-
-export enum UserRegisterRoles {
+  COMPANY = 'COMPANY',
   CLIENT = 'CLIENT',
   EMPLOYER = 'EMPLOYER',
 }

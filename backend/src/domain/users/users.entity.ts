@@ -40,7 +40,7 @@ export class UsersEntity {
   @Column({ default: false })
   isVerify: boolean;
 
-  @Column()
+  @Column({nullable: true})
   verifyCode: string;
 
   @Column({ nullable: true })

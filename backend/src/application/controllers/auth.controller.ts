@@ -21,12 +21,20 @@ import { AuthLoginRequestDto } from '../../domain/auth/dto/auth-login-request.dt
 import { AuthLoginResponseDto } from '../../domain/auth/dto/auth-login-response.dto';
 import JwtAuthenticationGuard from '../guards/jwt-auth.guard';
 import { AuthVerifyOtpRequest } from '../../domain/auth/dto/auth-verify-otp-request';
-import { IRequestUser } from '../../domain/auth/interface/request-user.interface';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @ApiOperation({ summary: 'login user' })
+  @ApiOkResponse({ type: AuthLoginResponseDto })
+  @Post('login')
+  async login(
+    @Body() body: AuthLoginRequestDto,
+  ): Promise<AuthLoginResponseDto> {
+    return this.authService.login(body);
+  }
 
   @ApiOperation({ summary: 'registration new user' })
   @ApiCreatedResponse({ type: AuthRegisterResponseDto })
@@ -40,43 +48,23 @@ export class AuthController {
 
   @ApiOperation({ summary: 'verify user' })
   @ApiOkResponse()
-  @UseGuards(JwtAuthenticationGuard)
   @Patch('verify-otp')
-  async verifyOtpCode(
-    @Body() dto: AuthVerifyOtpRequest,
-    @Req() req: IRequestUser,
-  ) {
-    return this.authService.verifyOtpCode(req.user, dto);
+  async verifyOtpCode(@Body() dto: AuthVerifyOtpRequest) {
+    return this.authService.verifyOtpCode(dto);
   }
 
-  @ApiOperation({ summary: 'login user' })
-  @ApiOkResponse({ type: AuthLoginResponseDto })
-  @Post('login')
-  async login(
-    @Body() body: AuthLoginRequestDto,
-  ): Promise<AuthLoginResponseDto> {
-    return this.authService.login(body);
-  }
-
-    @Get("me")
-    async getMe() {
-        return await this.authService.getMe()
-    }
-
-    @Post("company/login")
-    async loginCompany() {
-        return await this.authService.loginCompany()
-    }
-}
-
-  @Get('reset-password-code')
-  async getResetPasswordCode(@Body() dto) {
-    return await this.authService.getResetPasswordCode(dto.phoneNumber);
-  }
+  @Post('request-recovery')
+  @ApiOkResponse()
+  async requestRecovery() {}
 
   @Post('reset-password')
   @ApiOkResponse()
   async resetPassword(@Body() dto) {
     // return this.authService.resetPassword(phoneNumber);
+  }
+
+  @Get('reset-password-code')
+  async getResetPasswordCode(@Body() dto) {
+    return await this.authService.getResetPasswordCode(dto.phoneNumber);
   }
 }
