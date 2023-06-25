@@ -1,4 +1,12 @@
-import { Body, Controller, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from '../../domain/auth/auth.service';
 import {
   ApiBadRequestResponse,
@@ -48,5 +56,27 @@ export class AuthController {
     @Body() body: AuthLoginRequestDto,
   ): Promise<AuthLoginResponseDto> {
     return this.authService.login(body);
+  }
+
+    @Get("me")
+    async getMe() {
+        return await this.authService.getMe()
+    }
+
+    @Post("company/login")
+    async loginCompany() {
+        return await this.authService.loginCompany()
+    }
+}
+
+  @Get('reset-password-code')
+  async getResetPasswordCode(@Body() dto) {
+    return await this.authService.getResetPasswordCode(dto.phoneNumber);
+  }
+
+  @Post('reset-password')
+  @ApiOkResponse()
+  async resetPassword(@Body() dto) {
+    // return this.authService.resetPassword(phoneNumber);
   }
 }
