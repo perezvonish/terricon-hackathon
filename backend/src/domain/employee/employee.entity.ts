@@ -11,7 +11,6 @@ export class EmployeeEntity extends BasicEntity {
   @Column({ default: 0 })
   rating: number;
 
-
   constructor(userId: number) {
     super();
     this.user = userId;
