@@ -13,7 +13,6 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '../../application/strategies/jwt.strategy';
 import { PasswordManager } from '../../infrastructure/password-manager';
 import { IsVerifyGuard } from '../../application/guards/isVerify.guard';
-import { AuthTransaction } from '../../infrastructure/transactions/auth-transaction';
 import { SmsResetPasswordRepository } from '../../infrastructure/repositories/sms-reset-password.repository';
 import { SmsResetPasswordEntity } from '../sms/sms-reset-password.entity';
 
@@ -37,7 +36,6 @@ import { SmsResetPasswordEntity } from '../sms/sms-reset-password.entity';
     JwtStrategy,
     PasswordManager,
     IsVerifyGuard,
-    AuthTransaction,
     SmsResetPasswordRepository,
   ],
 })

@@ -4,7 +4,7 @@ import { UsersEntity } from './users.entity';
 import { UserResponse } from './dto/user-response';
 import { UserChangePasswordRequestDto } from './dto/user-change-password-request.dto';
 import { PasswordManager } from '../../infrastructure/password-manager';
-import { FindOneOptions } from 'typeorm';
+import {DeepPartial, FindOneOptions} from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -20,6 +20,10 @@ export class UsersService {
 
   public async findOne(where: FindOneOptions<UsersEntity>) {
     return await this.userRepo.findOne(where);
+  }
+
+  public async save(user: UsersEntity) {
+    return await this.userRepo.save(user);
   }
 
   private async findUserById(id: number): Promise<UsersEntity> {

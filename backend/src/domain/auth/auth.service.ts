@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
-import { UsersEntity } from '../users/users.entity';
 import { CustomExceptions } from '../../config/custom.exceptions';
 import 'dotenv/config.js';
 import { AuthLoginSuccess } from '../../application/dto/auth/auth.response';
@@ -21,15 +20,13 @@ import { AuthLoginRequestDto } from './dto/auth-login-request.dto';
 import { PayloadDto } from './dto/payload.dto';
 import { PasswordManager } from '../../infrastructure/password-manager';
 import { AuthVerifyOtpRequest } from './dto/auth-verify-otp-request';
-import { AuthTransaction } from '../../infrastructure/transactions/auth-transaction';
 import { AuthLoginResponseDto } from './dto/auth-login-response.dto';
-import { v4 } from 'uuid';
-import { SmsResetPasswordEntity } from '../sms/sms-reset-password.entity';
 import { SmsResetPasswordRepository } from '../../infrastructure/repositories/sms-reset-password.repository';
 import {
   AuthVerifyOtp,
   RequestRecovery,
 } from '../../application/dto/auth/auth.request';
+import { UsersEntity } from '../users/users.entity';
 
 @Injectable()
 export class AuthService {
@@ -40,7 +37,6 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly smsService: SmsService,
     private readonly passwordManager: PasswordManager,
-    private readonly authTransaction: AuthTransaction,
     private readonly smsResetPasswordRepo: SmsResetPasswordRepository,
   ) {}
 
@@ -81,7 +77,7 @@ export class AuthService {
   async register(
     dto: AuthRegisterRequestDto,
   ): Promise<AuthRegisterResponseDto> {
-    if (this.checkPasswordRepeat(dto.password, dto.repeatPassword)) {
+    if (!this.checkPasswordRepeat(dto.password, dto.repeatPassword)) {
       throw new ForbiddenException('Invalid password repeat');
     }
 
@@ -92,12 +88,21 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const hashPassword = await this.passwordManager.hashPassword(dto.password);
 
+    const hashPassword = await this.passwordManager.hashPassword(dto.password);
     const verifyCode = this.smsService.mockGenerateCode();
 
-    await this.authTransaction.register(dto, hashPassword, verifyCode);
-    return new AuthRegisterResponseDto(1, '123123');
+    const newUser = new UsersEntity(
+      dto.phoneNumber,
+      hashPassword,
+      dto.name,
+      dto.surname,
+      dto.role,
+      verifyCode,
+    );
+    const user = await this.usersService.save(newUser);
+
+    return new AuthRegisterResponseDto(user.id, user.phoneNumber);
   }
 
   async verifyOtpCode({
@@ -122,7 +127,7 @@ export class AuthService {
     await this.userRepo.save(user);
   }
   private checkPasswordRepeat(password: string, repeat: string) {
-    return password === repeat;
+    return password == repeat;
   }
 
   async requestRecovery({ phoneNumber }: RequestRecovery): Promise<boolean> {

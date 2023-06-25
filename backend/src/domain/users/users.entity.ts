@@ -8,8 +8,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserRoles } from '../interfaces/user.roles';
-import { EmployeeEntity } from '../employee/employee.entity';
-import { ClientEntity } from '../client/client.entity';
 // import { SmsResetPasswordEntity } from '../sms/sms-reset-password.entity';
 @Entity({ name: 'user' })
 export class UsersEntity {
@@ -51,12 +49,6 @@ export class UsersEntity {
 
   @Column({ default: 0 })
   raining: number;
-
-  @OneToOne(() => EmployeeEntity)
-  employee: EmployeeEntity;
-
-  @OneToOne(() => ClientEntity)
-  client: ClientEntity;
 
   // @OneToMany(
   //   () => SmsResetPasswordEntity,

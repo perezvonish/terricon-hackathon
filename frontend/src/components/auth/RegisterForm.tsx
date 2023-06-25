@@ -28,12 +28,8 @@ const RegisterForm = ({ onTabChange }: {onTabChange: any}) => {
             const res = await authRegisterRequest(data)
 
             if (res.status == 201){
-                console.log(res)
-
-                setCookie(null, "phoneNumber", res.data.phoneNumber)
-
                 // eslint-disable-next-line react-hooks/rules-of-hooks
-                await Router.push('/test');
+                await Router.push('/');
             }
         }
         catch (e) {

@@ -3,6 +3,7 @@ import axios from "@/core/axios";
 export enum UserRegisterRoles {
     CLIENT = 'CLIENT',
     EMPLOYER = 'EMPLOYER',
+    COMPANY = "COMPANY"
 }
 
 export interface AuthRegister {

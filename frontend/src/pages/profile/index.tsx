@@ -5,6 +5,7 @@ import {useRouter} from "next/router";
 import ClientProfile from "@/components/profile/client/ClientProfile";
 import EmployeeProfile from "@/components/profile/employee/EmployeeProfile";
 import CompanyProfile from "@/components/profile/company/CompanyProfile";
+import LayoutGradient from "@/components/LayoutGradient";
 
 const cookies = parseCookies()
 
@@ -30,7 +31,11 @@ const Index = () => {
         profileComponent = <CompanyProfile />;
     }
 
-    return profileComponent;
+    return (
+        <LayoutGradient>
+            {profileComponent}
+        </LayoutGradient>
+    );
 };
 
 export default Index;
