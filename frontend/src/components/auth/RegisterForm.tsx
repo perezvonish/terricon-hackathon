@@ -2,14 +2,45 @@ import React, {useState} from 'react';
 import styles from "@/styles/auth.module.css"
 import Image from 'next/image';
 import ArrowImage from "../../../public/arrow.svg"
+import {AuthRegister, authRegisterRequest, UserRegisterRoles} from "@/api/auth/auth.api";
+import Router from 'next/router'
+import {setCookie, destroyCookie, parseCookies} from 'nookies'
 
 const RegisterForm = ({ onTabChange }: {onTabChange: any}) => {
-    const [userType, setUserType] = useState('customer');
+    const [userType, setUserType] = useState('CLIENT');
     const [phone, setPhone] = useState('');
-    const [nickname, setNickname] = useState('');
+    const [name, setName] = useState('');
+    const [surname, setSurname] = useState('TEST');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
 
+    const onSubmit = async () => {
+        const data: AuthRegister = {
+            phoneNumber: phone,
+            name,
+            surname,
+            password,
+            repeatPassword,
+            role: userType as UserRegisterRoles
+        }
+
+        try {
+            const res = await authRegisterRequest(data)
+
+            if (res.status == 201){
+                console.log(res)
+
+                setCookie(null, "phoneNumber", res.data.phoneNumber)
+
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                await Router.push('/test');
+            }
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
+    
     const changeUserType = (type: string) => {
         return setUserType(type);
     };
@@ -18,8 +49,8 @@ const RegisterForm = ({ onTabChange }: {onTabChange: any}) => {
         return setPhone(event.target.value);
     };
 
-    const handleNicknameChange = (event: any) => {
-        return setNickname(event.target.value);
+    const handleNameChange = (event: any) => {
+        return setName(event.target.value);
     };
 
     const handlePasswordChange = (event: any) => {
@@ -46,10 +77,10 @@ const RegisterForm = ({ onTabChange }: {onTabChange: any}) => {
 
                 <div className="flex flex-col mt-6">
                     <div className="flex flex-row justify-around items-center">
-                        <button id="customer" type="button" className={`rounded-[30px] text-lg p-4 ${userType === 'customer' ? 'bg-blue-300' : 'bg-gray-0'}`} onClick={() => changeUserType('customer')}>
+                        <button id="customer" type="button" className={`rounded-[30px] text-lg p-4 ${userType === 'CLIENT' ? 'bg-blue-300' : 'bg-gray-0'}`} onClick={() => changeUserType('CLIENT')}>
                             Я заказчик
                         </button>
-                        <button id="executor" type="button" className={` rounded-[30px] text-lg p-4 ${userType === 'executor' ? 'bg-blue-300' : 'bg-none'}`} onClick={() => changeUserType('executor')}>
+                        <button id="executor" type="button" className={` rounded-[30px] text-lg p-4 ${userType === 'EMPLOYER' ? 'bg-blue-300' : 'bg-none'}`} onClick={() => changeUserType('EMPLOYER')}>
                             Я исполнитель
                         </button>
                     </div>
@@ -62,10 +93,10 @@ const RegisterForm = ({ onTabChange }: {onTabChange: any}) => {
                     />
                     <input
                         type="text"
-                        value={nickname}
+                        value={name}
                         className="h-[4rem] bg-zinc-100 rounded-[30px] text-lg font-bold pl-4 mt-4"
-                        placeholder="Никнейм"
-                        onInput={handleNicknameChange}
+                        placeholder="Имя"
+                        onInput={handleNameChange}
                     />
                     <input
                         type="text"
@@ -88,7 +119,7 @@ const RegisterForm = ({ onTabChange }: {onTabChange: any}) => {
                         <label className="ml-2" htmlFor="flag">Я прочел условия и даю согласие на обработку персональных данных</label>
                     </div>
 
-                    <button type="submit" className="rounded-[30px] text-lg font-bold p-4 mt-4 bg-blue-200">Зарегистрироваться</button>
+                    <button type="button" onClick={() => onSubmit()} className="rounded-[30px] text-lg font-bold p-4 mt-4 bg-blue-200">Зарегистрироваться</button>
                 </div>
             </label>
         </form>
