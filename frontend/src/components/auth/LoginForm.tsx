@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {AuthLogin, authLoginRequest} from "@/api/auth/auth.api";
+import {AuthLogin, authLoginRequest} from "@/api/auth.api";
 import {setCookie} from "nookies";
 import Router from "next/router";
 
@@ -34,7 +34,7 @@ const LoginForm = ({ onTabChange }: {onTabChange: any}) => {
                 setCookie(null, "token", res.data.token)
 
                 // eslint-disable-next-line react-hooks/rules-of-hooks
-                await Router.push('/profile');
+                await Router.push('/');
                 Router.reload();
             }
         }

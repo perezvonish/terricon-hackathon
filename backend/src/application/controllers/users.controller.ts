@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -20,10 +21,15 @@ import { IRequestUser } from '../../domain/auth/interface/request-user.interface
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  @Get('by-id/:id')
-  @UseGuards(JwtAuthenticationGuard)
+  @Get(':id')
+  // @UseGuards(JwtAuthenticationGuard)
   public async getById(@Param('id') param: ParamIdDto): Promise<UserResponse> {
     return this.userService.getUserById(param.id);
+  }
+
+  @Get('/list')
+  public async getEmployeeList() {
+    return await this.userService.getEmployeeList();
   }
 
   @Patch('change-password')

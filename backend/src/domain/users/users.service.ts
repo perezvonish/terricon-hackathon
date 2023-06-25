@@ -4,7 +4,8 @@ import { UsersEntity } from './users.entity';
 import { UserResponse } from './dto/user-response';
 import { UserChangePasswordRequestDto } from './dto/user-change-password-request.dto';
 import { PasswordManager } from '../../infrastructure/password-manager';
-import {DeepPartial, FindOneOptions} from 'typeorm';
+import { FindOneOptions } from 'typeorm';
+import { UserRoles } from '../interfaces/user.roles';
 
 @Injectable()
 export class UsersService {
@@ -27,12 +28,19 @@ export class UsersService {
   }
 
   private async findUserById(id: number): Promise<UsersEntity> {
-    const user = await this.userRepo.getById(id);
+    const user = await this.userRepo.findOne({ where: { id } });
 
     if (!user) {
       throw new HttpException('user not found', HttpStatus.BAD_REQUEST);
     }
+
     return user;
+  }
+
+  async getEmployeeList() {
+    return await this.userRepo.findMany({
+      role: UserRoles.EMPLOYER,
+    });
   }
 
   public async changePassword(

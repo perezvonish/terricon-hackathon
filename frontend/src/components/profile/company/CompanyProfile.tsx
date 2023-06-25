@@ -3,6 +3,7 @@ import Avatar from "@/components/profile/Avatar";
 import Description from "@/components/profile/Description";
 import CompanyInfo from "@/components/profile/company/CompanyInfo";
 import ApartX from "../../../../public/ApartX.png"
+import CompanyButtons from "@/components/profile/company/CompanyButtons";
 
 const CompanyProfile = () => {
     return (
@@ -16,9 +17,7 @@ const CompanyProfile = () => {
                     <Description />
                 </div>
                 <div className="mt-6">
-                    <div>
-                        Buttons
-                    </div>
+                    <CompanyButtons />
                     <CompanyInfo />
                 </div>
             </div>

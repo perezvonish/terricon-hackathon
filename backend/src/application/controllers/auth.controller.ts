@@ -22,11 +22,22 @@ import { AuthLoginResponseDto } from '../../domain/auth/dto/auth-login-response.
 import JwtAuthenticationGuard from '../guards/jwt-auth.guard';
 import { AuthVerifyOtpRequest } from '../../domain/auth/dto/auth-verify-otp-request';
 import { AuthVerifyOtp, RequestRecovery } from '../dto/auth/auth.request';
+import { IRequestUser } from '../../domain/auth/interface/request-user.interface';
+import { UsersUpdateProfile } from '../dto/users/users.request';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Post('update')
+  async updateProfile(
+    @Req() { user }: IRequestUser,
+    @Body() body: UsersUpdateProfile,
+  ): Promise<boolean> {
+    return await this.authService.updateProfile(user, body);
+  }
 
   @ApiOperation({ summary: 'login user' })
   @ApiOkResponse({ type: AuthLoginResponseDto })

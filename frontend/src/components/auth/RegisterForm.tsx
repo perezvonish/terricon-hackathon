@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import styles from "@/styles/auth.module.css"
 import Image from 'next/image';
 import ArrowImage from "../../../public/arrow.svg"
-import {AuthRegister, authRegisterRequest, UserRegisterRoles} from "@/api/auth/auth.api";
+import {AuthRegister, authRegisterRequest, UserRegisterRoles} from "@/api/auth.api";
 import Router from 'next/router'
 import {setCookie, destroyCookie, parseCookies} from 'nookies'
 

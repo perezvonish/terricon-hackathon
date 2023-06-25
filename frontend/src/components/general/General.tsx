@@ -2,6 +2,7 @@ import React from 'react';
 import Welcome from "@/components/general/Welcome";
 import TopFive from "@/components/general/TopFive";
 import LayoutGradient from "@/components/LayoutGradient";
+import Gallery from "@/components/general/Gallery";
 
 const General = () => {
     return (
@@ -9,6 +10,7 @@ const General = () => {
             <Welcome />
             <LayoutGradient>
                 <TopFive />
+                <Gallery />
             </LayoutGradient>
         </div>
     );

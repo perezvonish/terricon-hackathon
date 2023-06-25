@@ -9,6 +9,18 @@ export class UserResponse {
   @ApiProperty()
   phoneNumber: string;
 
+  @ApiProperty({ nullable: true })
+  email: string;
+
+  @ApiProperty({ nullable: true })
+  country: string;
+
+  @ApiProperty({ nullable: true })
+  birthday: Date;
+
+  @ApiProperty({ nullable: true })
+  bio: string;
+
   @ApiProperty()
   name: string;
 
@@ -30,6 +42,10 @@ export class UserResponse {
   constructor(user: UsersEntity) {
     this.id = user.id;
     this.phoneNumber = user.phoneNumber;
+    this.email = user.email
+    this.country = user.country
+    this.birthday = user.birthday
+    this.bio = user.bio
     this.name = user.name;
     this.surname = user.surname;
     this.isVerify = user.isVerify;

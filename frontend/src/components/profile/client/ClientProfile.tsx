@@ -3,9 +3,10 @@ import Avatar from "@/components/profile/Avatar";
 import Description from "@/components/profile/Description";
 import ClientInfo from "@/components/profile/client/ClientInfo";
 import ClientPhoto from "../../../../public/emptyPhoto.png"
+import {UserGetByIDResponse} from "@/api/profile.api";
+import ClientButton from "@/components/profile/client/ClientButton";
 
-
-const ClientProfile = () => {
+const ClientProfile = (data: {data: UserGetByIDResponse}) => {
     return (
         <div className="mx-auto my-10">
             <p className="text-2xl">
@@ -17,10 +18,8 @@ const ClientProfile = () => {
                     <Description />
                 </div>
                 <div className="mt-6">
-                    <div>
-                        Buttons
-                    </div>
-                    <ClientInfo />
+                    <ClientButton />
+                    <ClientInfo data={data.data} />
                 </div>
             </div>
         </div>

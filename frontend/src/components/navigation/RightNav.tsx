@@ -16,11 +16,14 @@ const RightNav = () => {
     const handleLogout = () => {
         destroyCookie(null, 'token')
         router.reload();
+        router.push("/")
+
     };
 
     const company = <Link href="/company" className={styles.navigationLink}><button className={general.blueButton}>Я - компания</button></Link>
     const login = <Link href="/auth" className={`${styles.navigationLink}`}>Войти</Link>
-    const profile = <Link href="/profile" className={`${styles.navigationLink} mr-2`}>Профиль</Link>
+    // @ts-ignore
+    const profile = decodedToken && decodedToken.id ? <Link href={`/profile/${decodedToken.id}`} className={`${styles.navigationLink} mr-2`}>Профиль</Link> : <div></div>
     const logout = <button onClick={handleLogout}>Выйти</button>
 
     return (

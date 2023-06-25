@@ -3,6 +3,7 @@ import Avatar from "@/components/profile/Avatar";
 import Description from "@/components/profile/Description";
 import EmployeeInfo from "@/components/profile/employee/EmployeeInfo";
 import EmployeeImage from "../../../../public/workerExample.png"
+import EmployeeButtons from "@/components/profile/employee/EmployeeButtons";
 
 const EmployeeProfile = () => {
     return (
@@ -15,10 +16,8 @@ const EmployeeProfile = () => {
                     <Avatar image={EmployeeImage}/>
                     <Description />
                 </div>
-                <div className="mt-6">
-                    <div>
-                        Buttons
-                    </div>
+                <div className="mt-4">
+                    <EmployeeButtons />
                     <EmployeeInfo />
                 </div>
             </div>

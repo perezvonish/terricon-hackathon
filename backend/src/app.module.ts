@@ -4,6 +4,7 @@ import { OrmConfig } from './infrastructure/dataSourceOptions';
 import { ConfigModule } from '@nestjs/config';
 import { ModulesArray } from './infrastructure/modules.array';
 import { DadataModule } from './domain/dadata/dadata.module';
+import {CategoryController} from "./application/controllers/category.controller";
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { DadataModule } from './domain/dadata/dadata.module';
     ...ModulesArray,
     DadataModule,
   ],
-  controllers: [],
+  controllers: [CategoryController],
   providers: [],
 })
 export class AppModule {}

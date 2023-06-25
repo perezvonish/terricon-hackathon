@@ -18,6 +18,6 @@ import { PasswordManager } from '../../infrastructure/password-manager';
     JwtStrategy,
     PasswordManager,
   ],
-  exports: [],
+  exports: [UsersService],
 })
 export class UsersModule {}

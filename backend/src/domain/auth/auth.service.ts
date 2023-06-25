@@ -27,6 +27,7 @@ import {
   RequestRecovery,
 } from '../../application/dto/auth/auth.request';
 import { UsersEntity } from '../users/users.entity';
+import { UsersUpdateProfile } from '../../application/dto/users/users.request';
 
 @Injectable()
 export class AuthService {
@@ -39,6 +40,32 @@ export class AuthService {
     private readonly passwordManager: PasswordManager,
     private readonly smsResetPasswordRepo: SmsResetPasswordRepository,
   ) {}
+
+  public async updateProfile(
+    user: UsersEntity,
+    data: UsersUpdateProfile,
+  ): Promise<boolean> {
+    user.email = data.email;
+    user.name = data.name;
+    user.country = data.country;
+    user.birthday = data.birthday;
+
+    if (data.password) {
+      if (data.password == data.newPassword) {
+        throw new BadRequestException(CustomExceptions.SAME_PASSWORDS);
+      }
+
+      if (!this.passwordManager.comparePassword(data.password, user.password)) {
+        throw new ForbiddenException(CustomExceptions.INCORRECT_PASSWORD);
+      }
+
+      user.password = await this.passwordManager.hashPassword(data.newPassword);
+    }
+
+    await this.usersService.save(user);
+
+    return true;
+  }
 
   async login({
     phoneNumber,

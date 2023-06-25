@@ -8,9 +8,10 @@ import {
 } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { IRepository } from '../../domain/interfaces/repository.interface';
+import { UserRoles } from '../../domain/interfaces/user.roles';
 
 @Injectable()
-export class UsersRepository implements IRepository<UsersEntity> {
+export class UsersRepository {
   constructor(
     @InjectRepository(UsersEntity)
     private readonly repo: Repository<UsersEntity>,
@@ -27,15 +28,12 @@ export class UsersRepository implements IRepository<UsersEntity> {
       .getOne();
   }
 
-  async getById(id: number): Promise<UsersEntity> {
-    return await this.repo
+  findMany(where: FindOptionsWhere<UsersEntity>) {
+    return this.repo
       .createQueryBuilder('user')
-      .where('user.id = :id', { id })
-      .getOne();
-  }
-
-  findMany(where: FindManyOptions<UsersEntity>) {
-    return this.repo.find(where);
+      .select('user.id')
+      .where(`user.role = ${UserRoles.EMPLOYER}`)
+      .getMany();
   }
 
   findOne(where: FindOneOptions<UsersEntity>) {
