@@ -1,0 +1,48 @@
+.auth {
+  min-height: 100%;
+}
+
+.checkboxContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 2rem;
+
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.checkboxInput {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkboxCheckmark {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: rgba(165, 206, 255, 1);
+  border-radius: 1rem;
+}
+
+.checkboxCheckmark::after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkboxInput:checked ~ .checkboxCheckmark::after {
+  display: block;
+}
+
+.checkboxCheckmark::after {
+  left: 6px;
+  top: 2px;
+  width: 7px;
+  height: 12px;
+  border: solid #000;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}

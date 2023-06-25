@@ -1,10 +1,19 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { OrmConfig } from './infrastructure/dataSourceOptions';
+import { ConfigModule } from '@nestjs/config';
+import { ModulesArray } from './infrastructure/modules.array';
+import { DadataModule } from './domain/dadata/dadata.module';
+import {CategoryController} from "./application/controllers/category.controller";
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    TypeOrmModule.forRoot(OrmConfig),
+    ConfigModule.forRoot({ isGlobal: true }),
+    ...ModulesArray,
+    DadataModule,
+  ],
+  controllers: [CategoryController],
+  providers: [],
 })
 export class AppModule {}

@@ -1,0 +1,78 @@
+$lemon-color: rgba(239, 255, 165, 1);
+$blue-color: rgba(165, 206, 255, 1);
+
+.lemonButton {
+  background-color: $lemon-color;
+  color: black;
+  text-align: center;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 30px;
+  padding: 1rem 2rem;
+}
+
+.blueButton {
+  background-color: $blue-color;
+  color: black;
+  text-align: center;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+}
+
+.emptyButton {
+  color: black;
+  text-align: center;
+  border: 1px solid #000;
+  border-radius: 2rem;
+  width: min-content;
+  padding: 0.5rem 1rem;
+}
+
+.shadowBox {
+  background-color: rgba(255, 255, 255, 1);
+  padding: 2rem;
+
+  max-height: 100vh;
+
+  border-radius: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.gridBoxLemon {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 2rem;
+  background-color: $lemon-color;
+  color: black;
+  text-align: left;
+  padding: 1rem 2rem;
+}
+
+.gridBoxBlue {
+  display: flex;
+  height: fit-content;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 2rem;
+  background-color: $blue-color;
+  color: black;
+  text-align: center;
+  padding: 1rem 1rem;
+}
+
+.gradientBackground {
+  background: radial-gradient(
+                  circle at left top,
+                  rgba(239, 255, 165, 1),
+                  rgba(255, 255, 255, 1) 50%, /* Белый цвет в середине */
+                  rgba(165, 206, 255, 1)
+  );
+}
+
+.last *:last-child {
+  margin-right: 0;
+}
