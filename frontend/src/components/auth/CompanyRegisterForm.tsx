@@ -4,6 +4,7 @@ import ArrowImage from "../../../public/arrow.svg";
 import styles from "@/styles/auth.module.css";
 import {AuthRegister, authRegisterRequest, UserRegisterRoles} from "@/api/auth/auth.api";
 import Router from "next/router";
+import Link from "next/link";
 
 const CompanyRegisterForm = () => {
     const [phone, setPhone] = useState('');
@@ -55,9 +56,9 @@ const CompanyRegisterForm = () => {
             <form>
                 <label className="flex flex-col items-center">
                     <div className="mr-2 self-start">
-                        <button>
+                        <Link href="/">
                             <Image priority src={ArrowImage} alt="Back" width={24} height={24} />
-                        </button>
+                        </Link>
                     </div>
                     <span className="text-black text-[40px] font-normal">РЕГИСТРАЦИЯ</span>
 
