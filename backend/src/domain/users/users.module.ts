@@ -7,9 +7,10 @@ import { UsersEntity } from './users.entity';
 import JwtAuthenticationGuard from '../../application/guards/jwt-auth.guard';
 import { JwtStrategy } from '../../application/strategies/jwt.strategy';
 import { PasswordManager } from '../../infrastructure/password-manager';
+import { EmployeeEntity } from '../employee/employee.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UsersEntity])],
+  imports: [TypeOrmModule.forFeature([UsersEntity, EmployeeEntity])],
   controllers: [UsersController],
   providers: [
     UsersService,

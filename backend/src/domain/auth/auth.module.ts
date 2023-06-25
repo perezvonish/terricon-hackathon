@@ -13,6 +13,9 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '../../application/strategies/jwt.strategy';
 import { PasswordManager } from '../../infrastructure/password-manager';
 import { IsVerifyGuard } from '../../application/guards/isVerify.guard';
+import { AuthTransaction } from '../../infrastructure/transactions/auth-transaction';
+import { SmsResetPasswordRepository } from '../../infrastructure/repositories/sms-reset-password.repository';
+import { SmsResetPasswordEntity } from '../sms/sms-reset-password.entity';
 
 @Module({
   imports: [
@@ -21,7 +24,7 @@ import { IsVerifyGuard } from '../../application/guards/isVerify.guard';
       secret: process.env.JWT_SECRET.toString(),
       signOptions: { expiresIn: '3d' },
     }),
-    TypeOrmModule.forFeature([UsersEntity]),
+    TypeOrmModule.forFeature([UsersEntity, SmsResetPasswordEntity]),
     PassportModule,
   ],
   controllers: [AuthController],
@@ -34,6 +37,8 @@ import { IsVerifyGuard } from '../../application/guards/isVerify.guard';
     JwtStrategy,
     PasswordManager,
     IsVerifyGuard,
+    AuthTransaction,
+    SmsResetPasswordRepository,
   ],
 })
 export class AuthModule {}
